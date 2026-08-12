@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="rdrand-hamming-distance.vcxproj" />
+  <Project Path="rdrand-hamming-distance.vcxproj" Id="6ee7539f-3c96-4d43-85e7-79fb99dd94eb" />
 </Solution>
