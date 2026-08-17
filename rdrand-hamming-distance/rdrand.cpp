@@ -3,7 +3,8 @@
 #include <stdexcept>
 
 rdrand::rdrand() :
-	m_max_retries{ 10U }
+	m_max_retries { 10U },
+	m_retries { 0U }
 {
 }
 
@@ -11,7 +12,7 @@ rdrand::~rdrand()
 {
 }
 
-uint64_t rdrand::operator() () const
+uint64_t rdrand::operator() ()
 {
 	uint64_t rand_value = 0U;
 	bool valid = false;
@@ -23,6 +24,8 @@ uint64_t rdrand::operator() () const
 		{
 			break;
 		}
+
+		++m_retries;
 	}
 
 	if (not valid)
@@ -31,4 +34,9 @@ uint64_t rdrand::operator() () const
 	}
 
 	return rand_value;
+}
+
+size_t rdrand::retries() const
+{
+	return m_retries;
 }
