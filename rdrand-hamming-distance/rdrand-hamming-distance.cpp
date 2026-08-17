@@ -9,22 +9,18 @@
 int main(int argc, char* argv[])
 try
 {
-#if 0
     if (argc != 2)
     {
         std::cerr << "Error: number of random numbers missing" << std::endl;
         throw std::invalid_argument("Missing argument");
     }
-#endif
 
     size_t n_rand_numbers = 10000000U;
 
-#if 0
     {
         std::stringstream ss{ argv[1] };
         ss >> n_rand_numbers;
     }
-#endif
 
     rdrand rng { };
 
