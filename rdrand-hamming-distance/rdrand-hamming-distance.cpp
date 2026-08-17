@@ -69,6 +69,10 @@ try
 
     long double const arithm_mean = (static_cast<long double>(distances_sum) / static_cast<long double>(total_distances));
     std::cout << "Mean: " << arithm_mean << std::endl;
+
+    auto const rng_retries = rng.retries();
+    std::cout << "RNG retries: " << rng_retries << std::endl;
+
     uint64_t n = 0U;
 
     for (uint64_t const& h : histogram)
