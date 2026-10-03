@@ -24,8 +24,7 @@ try
 
     rdrand rng { };
 
-    bool skip_first = true;
-    uint64_t prev_value = 0U;
+    uint64_t prev_value = rng();
     uint64_t distances_sum = 0U;
 
     constexpr int max_distance = 64;
@@ -33,35 +32,27 @@ try
 
     for (size_t i = 0U; i < n_rand_numbers; ++i)
     {
-        if (skip_first)
+        uint64_t const value = rng();
+
+        // Compute Hamming distance:
+        uint64_t const diff = (value xor prev_value);
+        int const distance = std::popcount(diff);
+
+        bool const distance_ok = ((distance >= 0) and (distance <= max_distance));
+        if (distance_ok)
         {
-            prev_value = rng();
-            skip_first = false;
+            histogram[distance] += 1U;
         }
         else
         {
-            uint64_t const value = rng();
-
-            // Compute Hamming distance:
-            uint64_t const diff = (value xor prev_value);
-            int const distance = std::popcount(diff);
-
-            bool const distance_ok = ((distance >= 0) and (distance <= max_distance));
-            if (distance_ok)
-            {
-                histogram[distance] += 1U;
-            }
-            else
-            {
-                throw std::runtime_error("Distance out of range");
-            }
-#if 0
-            std::cout << std::hex << prev_value << " " << value << ": " << std::dec << distance << std::endl;
-#endif
-            prev_value = value;
-
-            distances_sum += distance;
+            throw std::runtime_error("Distance out of range");
         }
+#if 0
+        std::cout << std::hex << prev_value << " " << value << ": " << std::dec << distance << std::endl;
+#endif
+        prev_value = value;
+
+        distances_sum += distance;
     }
 
     std::cout << "Sum: " << std::dec << distances_sum << std::endl;
