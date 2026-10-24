@@ -25,7 +25,6 @@ try
     rdrand rng { };
 
     uint64_t prev_value = rng();
-    uint64_t distances_sum = 0U;
 
     constexpr int max_distance = 64;
     constexpr size_t total_batches = 10U;
@@ -56,16 +55,8 @@ try
             std::cout << std::hex << prev_value << " " << value << ": " << std::dec << distance << std::endl;
 #endif
             prev_value = value;
-
-            distances_sum += distance;
         }
     }
-
-    std::cout << "Sum: " << std::dec << distances_sum << std::endl;
-    uint64_t const total_distances = (n_rand_numbers - 1U);
-
-    long double const arithm_mean = (static_cast<long double>(distances_sum) / static_cast<long double>(total_distances));
-    std::cout << "Mean: " << arithm_mean << std::endl;
 
     auto const rng_retries = rng.retries();
     std::cout << "RNG retries: " << rng_retries << std::endl;
@@ -74,12 +65,22 @@ try
     {
         std::cout << "Batch: " << batch << std::endl;
         uint64_t n = 0U;
+        uint64_t distances_sum = 0U;
+        uint64_t total_distances = 0U;
 
         for (uint64_t const& h : histogram[batch])
         {
+            distances_sum += (n * h);
+            total_distances += h;
+
             std::cout << n << ": " << h << std::endl;
             ++n;
         }
+
+        std::cout << "Sum: " << std::dec << distances_sum << std::endl;
+
+        long double const arithm_mean = (static_cast<long double>(distances_sum) / static_cast<long double>(total_distances));
+        std::cout << "Mean: " << arithm_mean << std::endl;
     }
 
     return EXIT_SUCCESS;
