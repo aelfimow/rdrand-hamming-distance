@@ -11,13 +11,13 @@ public:
 	rdrand();
 	~rdrand();
 
-	uint64_t operator() ();
+	uint64_t operator() () const;
 
 	size_t retries() const;
 
 private:
 	size_t const m_max_retries;
-	size_t m_retries;
+	mutable size_t m_retries;
 };
 
 #endif
