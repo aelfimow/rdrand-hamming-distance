@@ -139,10 +139,12 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="parser.cpp" />
     <ClCompile Include="rdrand-hamming-distance.cpp" />
     <ClCompile Include="rdrand.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="parser.hpp" />
     <ClInclude Include="rdrand.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
