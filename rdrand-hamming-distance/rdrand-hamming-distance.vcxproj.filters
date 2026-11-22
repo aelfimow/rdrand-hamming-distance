@@ -21,9 +21,15 @@
     <ClCompile Include="rdrand.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rdrand.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="parser.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
