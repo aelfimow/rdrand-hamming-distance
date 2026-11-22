@@ -12,7 +12,7 @@ rdrand::~rdrand()
 {
 }
 
-uint64_t rdrand::operator() () const
+[[nodiscard]] uint64_t rdrand::operator() () const
 {
 	uint64_t rand_value = 0U;
 	bool valid = false;
@@ -36,7 +36,7 @@ uint64_t rdrand::operator() () const
 	return rand_value;
 }
 
-size_t rdrand::retries() const
+[[nodiscard]] size_t rdrand::retries() const
 {
 	return m_retries;
 }
