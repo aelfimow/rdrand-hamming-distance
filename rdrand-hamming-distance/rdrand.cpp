@@ -40,7 +40,7 @@ rdrand::~rdrand()
 	return rand_value;
 }
 
-[[nodiscard]] size_t rdrand::retries() const
+[[nodiscard]] size_t rdrand::retries() const noexcept
 {
 	return m_retries;
 }
