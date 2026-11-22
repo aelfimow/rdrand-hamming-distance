@@ -1,97 +1,94 @@
-#include <iostream>
-#include <cstdlib>
-#include <stdexcept>
-#include <sstream>
-#include <bit>
-
+#include "parser.hpp"
 #include "rdrand.hpp"
+
+#include <array>
+#include <bit>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
+#include <limits>
+#include <stdexcept>
 
 int main(int argc, char* argv[])
 try
 {
-    if (argc != 2)
+    constexpr std::size_t default_rand_numbers = 10'000'000U;
+
+    parser const cli_parser { };
+    std::size_t const n_rand_numbers = (argc >= 2) ?
+        cli_parser.positive_count(argv[1]).value_or(default_rand_numbers) :
+        default_rand_numbers;
+
+    rdrand const rng { };
+    std::uint64_t prev_value = rng();
+
+    constexpr int max_distance = std::numeric_limits<std::uint64_t>::digits;
+    static_assert(max_distance == 64, "Expected 64-bit unsigned integer");
+
+    constexpr std::size_t total_batches = 10U;
+    using Histogram = std::array<std::array<std::uint64_t, static_cast<std::size_t>(max_distance) + 1U>, total_batches>;
+    Histogram histogram { };
+
+    for (std::size_t batch = 0U; batch < total_batches; ++batch)
     {
-        std::cerr << "Error: number of random numbers missing" << std::endl;
-        throw std::invalid_argument("Missing argument");
-    }
+        std::cout << "Computing batch " << batch << " with " << n_rand_numbers << " random numbers\n";
 
-    size_t n_rand_numbers = 10000000U;
-
-    {
-        std::stringstream ss{ argv[1] };
-        ss >> n_rand_numbers;
-    }
-
-    rdrand rng { };
-
-    uint64_t prev_value = rng();
-
-    constexpr int max_distance = 64;
-    constexpr size_t total_batches = 10U;
-    uint64_t histogram[total_batches][max_distance + 1] = { };
-
-    for (size_t batch = 0U; batch < total_batches; ++batch)
-    {
-        std::cout << "Computing batch " << batch << std::endl;
-
-        for (size_t i = 0U; i < n_rand_numbers; ++i)
+        for (std::size_t i = 0U; i < n_rand_numbers; ++i)
         {
-            uint64_t const value = rng();
+            std::uint64_t const value = rng();
 
-            // Compute Hamming distance:
-            uint64_t const diff = (value xor prev_value);
+            // Compute Hamming distance between consecutive 64-bit values:
+            std::uint64_t const diff = value ^ prev_value;
             int const distance = std::popcount(diff);
 
-            bool const distance_ok = ((distance >= 0) and (distance <= max_distance));
-            if (distance_ok)
-            {
-                histogram[batch][distance] += 1U;
-            }
-            else
-            {
-                throw std::runtime_error("Distance out of range");
-            }
-#if 0
-            std::cout << std::hex << prev_value << " " << value << ": " << std::dec << distance << std::endl;
-#endif
+            histogram[batch][static_cast<std::size_t>(distance)] += 1U;
             prev_value = value;
         }
     }
 
-    auto const rng_retries = rng.retries();
-    std::cout << "RNG retries: " << rng_retries << std::endl;
+    std::cout << "RNG retries: " << rng.retries() << '\n';
 
-    for (size_t batch = 0U; batch < total_batches; ++batch)
+    for (std::size_t batch = 0U; batch < total_batches; ++batch)
     {
-        std::cout << "Batch: " << batch << std::endl;
-        uint64_t n = 0U;
-        uint64_t distances_sum = 0U;
-        uint64_t total_distances = 0U;
+        std::cout << "\nBatch: " << batch << '\n';
+        std::uint64_t distances_sum = 0U;
+        std::uint64_t total_distances = 0U;
 
-        for (uint64_t const& h : histogram[batch])
+        for (std::size_t d = 0U; d < histogram[batch].size(); ++d)
         {
-            distances_sum += (n * h);
-            total_distances += h;
+            std::uint64_t const count = histogram[batch][d];
+            distances_sum += static_cast<std::uint64_t>(d) * count;
+            total_distances += count;
 
-            std::cout << n << ": " << h << std::endl;
-            ++n;
+            std::cout << d << ": " << count << '\n';
         }
 
-        std::cout << "Sum: " << std::dec << distances_sum << std::endl;
+        std::cout << "Sum: " << distances_sum << '\n';
 
-        long double const arithm_mean = (static_cast<long double>(distances_sum) / static_cast<long double>(total_distances));
-        std::cout << "Mean: " << arithm_mean << std::endl;
+        if (total_distances == n_rand_numbers)
+        {
+            long double const arithm_mean =
+                static_cast<long double>(distances_sum) / static_cast<long double>(total_distances);
+            std::cout << "Mean: " << arithm_mean << '\n';
+        }
+        else
+        {
+            std::cout << "Mean: n/a\n";
+        }
     }
+
+    std::cout.flush();
 
     return EXIT_SUCCESS;
 }
-catch (std::exception& exc)
+catch (std::exception const& exc)
 {
-    std::cerr << "Exception: " << exc.what() << std::endl;
+    std::cerr << "Exception: " << exc.what() << '\n';
     return EXIT_FAILURE;
 }
 catch (...)
 {
-    std::cerr << "Error, exception" << std::endl;
+    std::cerr << "Error: unknown exception\n";
     return EXIT_FAILURE;
 }
