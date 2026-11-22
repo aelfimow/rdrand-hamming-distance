@@ -8,7 +8,7 @@
 class rdrand
 {
 public:
-	rdrand();
+	explicit rdrand(size_t max_retries = 10U);
 	~rdrand();
 
 	[[nodiscard]] uint64_t operator() () const;
