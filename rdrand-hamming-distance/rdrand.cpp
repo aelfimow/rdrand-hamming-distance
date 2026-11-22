@@ -2,10 +2,14 @@
 #include <immintrin.h>
 #include <stdexcept>
 
-rdrand::rdrand() :
-	m_max_retries { 10U },
+rdrand::rdrand(size_t max_retries):
+	m_max_retries { max_retries },
 	m_retries { 0U }
 {
+	if (m_max_retries == 0U)
+	{
+		throw std::invalid_argument("Max. retries is invalid");
+	}
 }
 
 rdrand::~rdrand()
