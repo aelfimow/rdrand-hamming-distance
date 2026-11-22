@@ -13,7 +13,7 @@ public:
 
 	[[nodiscard]] uint64_t operator() () const;
 
-	[[nodiscard]] size_t retries() const;
+	[[nodiscard]] size_t retries() const noexcept;
 
 private:
 	size_t const m_max_retries;
