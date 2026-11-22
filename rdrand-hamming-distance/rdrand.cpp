@@ -12,7 +12,7 @@ rdrand::~rdrand()
 {
 }
 
-uint64_t rdrand::operator() ()
+uint64_t rdrand::operator() () const
 {
 	uint64_t rand_value = 0U;
 	bool valid = false;
