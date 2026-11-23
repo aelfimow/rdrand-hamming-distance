@@ -13,9 +13,9 @@ For each batch, the program builds a histogram of Hamming distances (`0` to `64`
 * `rdrand-hamming-distance.slnx` / `rdrand-hamming-distance.vcxproj` – Visual Studio solution and project files.
 
 ## Requirements
-* **Architecture:** 64-bit x86 (`x86_64` / `x64`) CPU supporting the `RDRAND` instruction.
-* **Compiler / Standard:** C++20 or newer (required for `<bit>` / `std::popcount`, `std::from_chars`, `std::optional`, and `std::string_view`).
-* **Build Environment:** MSVC / Visual Studio (`rdrand-hamming-distance.slnx`) or any C++20-compliant compiler supporting `<immintrin.h>` and `-mrdrnd` (GCC/Clang).
+* **Architecture:** 64-bit x86 (`x64`) CPU supporting the `RDRAND` instruction (`_rdrand64_step`).
+* **Compiler / Standard:** C++20 or newer (required for `<bit>` / `std::popcount`, `std::from_chars`, `std::optional`, and `std::string_view`)[cite: 5, 6, 9].
+* **Build Environment:** Visual Studio (`x64` configurations in `rdrand-hamming-distance.slnx` / `rdrand-hamming-distance.vcxproj`) or a C++20-capable compiler supporting `<immintrin.h>` and `-mrdrnd` (GCC/Clang)[cite: 2, 11, 12].
 
 ## Usage
 ```bash
